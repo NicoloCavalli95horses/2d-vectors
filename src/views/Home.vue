@@ -5,7 +5,7 @@
       <a href="https://www.youtube.com/watch?v=nzyOCd9FcCA">Learn 2D vectors with JavaScript</a>
     </h2>
     
-    <RouterLink to="/canvas">
+    <RouterLink to="/menu">
     <Btn text="play">
       <template #icon>
         <font-awesome-icon icon="fa-solid fa-play" />

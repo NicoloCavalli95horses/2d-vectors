@@ -1,8 +1,13 @@
 <template>
-  <canvas ref="canvas"></canvas>
+  <canvas ref="canvas" />
   <div class="info">
-    <h3>Magnitude (vector distance from center): ~{{ Math.round( getMagnitude( point )) }}</h3>
+    <h3>Magnitude: ~{{ getMagnitude( point ).toFixed(2) }}</h3>
+    <p>Vector distance from the center of the Cartesian plane</p>
+    <h3 class="top-12">Direction: ~{{ getDirection( point ).toFixed(2) }}</h3>
+    <p>Radians from the center. Range from 0 to π/2</p>
   </div>
+
+  <!-- Center point of the cartesian plane -->
   <div class="abs-center top-12">
     <h4>(0, 0)</h4>
   </div>
@@ -13,7 +18,7 @@
     'left' : `${ point.x + offset.x }px`,
     'transform' : 'translate(-50%, -50%)' 
   }">
-    <h4>({{ point.x }},{{ point.y }})</h4>
+    <h4>(X: {{ point.x }}, Y: {{ point.y }})</h4>
   </div>
 </template>
 
@@ -24,10 +29,12 @@
 import { reactive, ref } from "@vue/reactivity";
 import { onMounted } from "@vue/runtime-core";
 import { onUnmounted } from "vue";
+import { useRouter } from 'vue-router'
 
 // ==============================
 // Const
 // ==============================
+const router = useRouter();
 const canvas = ref( undefined );
 const ctx = ref( undefined );
 const offset = reactive({
@@ -45,11 +52,6 @@ const point = reactive({
 // ==============================
 // Functions
 // ==============================
-
-function randomInterval(min, max) { // min and max included 
-  return Math.floor(Math.random() * (max - min + 1) + min)
-}
-
 function drawPoint( x, y, radius = 5, color = "white" ){
   ctx.value.beginPath();
   ctx.value.fillStyle = color;
@@ -74,9 +76,15 @@ function drawAxes(){
   ctx.value.restore();
 }
 
-// Get (?)
+// Get distance from the center (magnitude)
 function getMagnitude({ x, y}){
   return Math.hypot(x, y);
+}
+
+// Get direction (angle from the center in radians)
+// The angle ranges from 0 (the point is on the X axis) to 1.56 (1/2 pi)
+function getDirection({ x, y }){
+  return Math.atan( y / x );
 }
 
 function onMouseMove( e ) {
@@ -96,11 +104,19 @@ function update() {
   ctx.value.restore();
 }
 
+function onkeyup( e ) {
+  if ( e.key == 'Escape' ){
+    router.push('/menu');
+  }
+}
+
 // ==============================
 // Life cycle
 // ==============================
 onMounted(() => {
   document.addEventListener('mousemove', onMouseMove );
+  document.addEventListener('keyup', onkeyup) ;
+
   ctx.value = canvas.value.getContext('2d');
   canvas.value.width = window.innerWidth;
   canvas.value.height = window.innerHeight;
@@ -124,6 +140,7 @@ onMounted(() => {
 
 onUnmounted(() => {
   document.removeEventListener('mousemove', onMouseMove );
+  document.removeEventListener('keyup', onkeyup) ;
 })
 
 </script>
@@ -135,8 +152,7 @@ onUnmounted(() => {
   left: 22px;
   width: max-content;
   height: auto;
-  border: 1px dotted #800;
-  h3 {
+  h3, p {
     margin: 8px 12px;
   }
 }
