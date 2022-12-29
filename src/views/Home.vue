@@ -1,9 +1,6 @@
 <template>
   <div class="abs-center flex-column">
     <h1 class="bottom-24">2D vectors</h1>
-    <h2 class="bottom-12">Credits to:
-      <a href="https://www.youtube.com/watch?v=nzyOCd9FcCA">Learn 2D vectors with JavaScript</a>
-    </h2>
     
     <RouterLink to="/menu">
     <Btn text="play">

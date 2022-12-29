@@ -11,7 +11,7 @@
         <RouterLink to="/demo"><p>Magnitude and direction</p></RouterLink>
       </li>
       <li>
-        <RouterLink to="/chase"><p>Chase simulation</p></RouterLink>
+        <RouterLink to="/attraction"><p>Attraction point</p></RouterLink>
       </li>
     </ul>
   </div>

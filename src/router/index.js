@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import Home from "../views/Home.vue";
 import Menu from "../views/Menu.vue";
 import Demo from "../views/Demo.vue";
-import Chase from "../views/Chase.vue";
+import Attraction from "../views/Attraction.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -23,9 +23,9 @@ const router = createRouter({
       component: () => import("../views/Demo.vue"),
     },
     {
-      path: "/chase",
-      name: "Chase",
-      component: () => import("../views/Chase.vue"),
+      path: "/attraction",
+      name: "Attraction",
+      component: () => import("../views/Attraction.vue"),
     },
   ],
 });
