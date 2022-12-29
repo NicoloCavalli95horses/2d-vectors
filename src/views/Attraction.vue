@@ -4,7 +4,7 @@
   <!-- Upper left info box -->
   <div class="info">
     <h3>Attraction point</h3>
-    <p>Which point will reach the center point last?</p>
+    <p>Just a random magnitude reduction. Cool, right?</p>
   </div>
 
   <!-- Center point of attraction -->
@@ -110,7 +110,7 @@ function generateRandomPoints() {
 
 function onkeyup(e) {
   if (e.key == "Escape") {
-    router.push("/menu");
+    router.push("/");
   }
 }
 

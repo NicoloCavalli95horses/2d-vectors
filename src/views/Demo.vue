@@ -122,7 +122,7 @@ function update() {
 
 function onkeyup(e) {
   if (e.key == "Escape") {
-    router.push("/menu");
+    router.push("/");
   }
 }
 
