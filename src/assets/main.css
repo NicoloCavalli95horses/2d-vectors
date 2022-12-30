@@ -45,6 +45,19 @@
   transform: translate(-50%, -50%);
 }
 
+
+.abs-center-left {
+  position: absolute;
+  top: 50%;
+  left: 22px;
+}
+
+.abs-center-right {
+  position: absolute;
+  top: 50%;
+  right: 22px;
+}
+
 svg {
   color: white;
   width: 25px;

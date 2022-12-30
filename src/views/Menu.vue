@@ -1,10 +1,17 @@
 <template>
-  <div class="abs-center">
+  <!-- Menu -->
+  <div class="abs-center menu">
     <h1 class="bottom-24">2D vectors</h1>
     <ul>
-      <li><RouterLink to="/demo"><p>Magnitude and direction</p></RouterLink></li>
-      <li><RouterLink to="/attraction"><p>Attraction point</p></RouterLink></li>
-      <li><RouterLink to="/mouse"><p>Mouse tracker</p></RouterLink></li>
+      <li>
+        <RouterLink to="/demo"><p>Magnitude and direction</p></RouterLink>
+      </li>
+      <li>
+        <RouterLink to="/attraction"><p>Attraction point</p></RouterLink>
+      </li>
+      <li>
+        <RouterLink to="/mouse"><p>Mouse tracker</p></RouterLink>
+      </li>
     </ul>
   </div>
 </template>
@@ -19,17 +26,24 @@ import Btn from "../components/Btn.vue";
 </script>
 
 <style scoped lang="scss">
-ul {
-  width: 300px;
-  li {
-    margin: 12px 0;
-    padding: 12px 0;
+.menu {
+  width: 400px;
+  h1 {
+    text-align: center;
+  }
+  ul li {
+    margin: 22px 0;
     font-size: 18px;
-    transition-duration: 400ms;
-
-    &:hover {
-      padding-left: 24px;
-      transition-duration: 400ms;
+    p {
+      padding: 8px 12px;
+      border: 2px solid white;
+      border-radius: 8px;
+      transition-duration: 800ms;
+      &:hover {
+        background-color: white;
+        color: black;
+        transition-duration: 800ms;
+      }
     }
   }
 }
