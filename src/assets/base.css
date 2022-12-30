@@ -7,9 +7,6 @@
 * {
   margin: 0;
   padding: 0;
-  user-select: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
 }
 
 body {
@@ -21,6 +18,9 @@ body {
 h1, h2, h3, h4, h5, h6, p, ul, li, a {
   font-family: monospace;
   color: white;
+  user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
 }
 h1 {
   font-size: 64px;
