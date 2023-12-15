@@ -4,14 +4,24 @@
 
     <!-- Range -->
     <div class="abs-center-left">
-      <h3> Press <div class="key">&larr;</div> <div class="key">&rarr;</div> <div class="key">&uarr;</div> <div class="key">&darr;</div> to</h3>
-      <h3> increse the bullets's size</h3>
+      <h3>
+        Press
+        <div class="key">&larr;</div>
+        <div class="key">&rarr;</div>
+        <div class="key">&uarr;</div>
+        <div class="key">&darr;</div>
+        to
+      </h3>
+      <h3>increse the bullets's size</h3>
     </div>
 
     <!-- Upper left info box -->
     <div class="top-left-corner">
       <h3>Mouse tracker</h3>
-      <p> x: {{ mouse.x }} <br> y: {{ mouse.y }} </p>
+      <p>
+        x: {{ mouse.x }} <br />
+        y: {{ mouse.y }}
+      </p>
       <p>Fired: {{ bulletsConfig.counter }}</p>
       <p>Bullets width: {{ bulletsConfig.size.width }}</p>
       <p>Bullets height: {{ bulletsConfig.size.height }}</p>
@@ -36,12 +46,11 @@
 // ==============================
 // Import
 // ==============================
-import { reactive, ref } from "@vue/reactivity";
-import { onMounted } from "@vue/runtime-core";
+import { reactive, ref } from "vue";
+import { onMounted } from "vue";
 import { onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 import {
-  randomInterval,
   getDirectionInRadians,
   getRandomColor,
   getXY,
@@ -112,7 +121,11 @@ function shoot() {
   let actualDirection = mouse.direction;
 
   // Create new bullet
-  bullets.push({ ...bullet, id: bulletsConfig.counter, color: getRandomColor() });
+  bullets.push({
+    ...bullet,
+    id: bulletsConfig.counter,
+    color: getRandomColor(),
+  });
 
   // Get ID of bullet (bullets's length may vary, an ID for every bullet is needed)
   let id = bullets.map((b) => b.id).indexOf(bulletsConfig.counter);
@@ -134,7 +147,10 @@ function updateBulletPosition(id, direction, forceStop = false) {
   }
 
   // Calculate next bullet coordinates based on fixed direction
-  bullets.at(id).next = getXY({ mag: bullets.at(id).magnitude, dir: direction });
+  bullets.at(id).next = getXY({
+    mag: bullets.at(id).magnitude,
+    dir: direction,
+  });
   bullets.at(id).x = bullets.at(id).next.x + offset.x;
   bullets.at(id).y = bullets.at(id).next.y + offset.y;
 
@@ -182,7 +198,12 @@ function drawCannon() {
 
   // Clear the canvas
   ctx.value.fillStyle = "#222";
-  ctx.value.fillRect( -offset.x, -offset.y, canvas.value.width, canvas.value.height );
+  ctx.value.fillRect(
+    -offset.x,
+    -offset.y,
+    canvas.value.width,
+    canvas.value.height
+  );
 
   // Draw the cannon
   ctx.value.beginPath();
@@ -202,24 +223,28 @@ function drawCannon() {
 
 // Clear the intervals, come back to the homepage
 function onkeyup(e) {
-  switch( e.key ) {
-    case 'Escape':
+  switch (e.key) {
+    case "Escape":
       clearAllIntervals.value = true;
       router.push("/");
       break;
-    case 'ArrowLeft':
-      bulletsConfig.size.width = bulletsConfig.size.width > 0 ? bulletsConfig.size.width - 5 : 0;  
+    case "ArrowLeft":
+      bulletsConfig.size.width =
+        bulletsConfig.size.width > 0 ? bulletsConfig.size.width - 5 : 0;
       break;
-    case 'ArrowRight':
-      bulletsConfig.size.width = bulletsConfig.size.width < 100 ? bulletsConfig.size.width + 5 : 100;  
+    case "ArrowRight":
+      bulletsConfig.size.width =
+        bulletsConfig.size.width < 100 ? bulletsConfig.size.width + 5 : 100;
       break;
-    case 'ArrowDown':
-      bulletsConfig.size.height = bulletsConfig.size.height > 0 ? bulletsConfig.size.height - 5 : 0;  
+    case "ArrowDown":
+      bulletsConfig.size.height =
+        bulletsConfig.size.height > 0 ? bulletsConfig.size.height - 5 : 0;
       break;
-    case 'ArrowUp':
-      bulletsConfig.size.height = bulletsConfig.size.height < 100 ? bulletsConfig.size.height + 5 : 100;  
-      break
-    }
+    case "ArrowUp":
+      bulletsConfig.size.height =
+        bulletsConfig.size.height < 100 ? bulletsConfig.size.height + 5 : 100;
+      break;
+  }
 }
 
 // Update mouse x, y, magnitude, direction

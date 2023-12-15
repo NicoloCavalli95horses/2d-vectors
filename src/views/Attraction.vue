@@ -20,16 +20,16 @@
 // ==============================
 // Import
 // ==============================
-import { reactive, ref } from "@vue/reactivity";
-import { onMounted } from "@vue/runtime-core";
+import { reactive, ref } from "vue";
+import { onMounted } from "vue";
 import { onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 import {
-  randomInterval,
-  getDirectionInRadians,
+  getXY,
   getMagnitude,
   getRandomColor,
-  getXY,
+  randomInterval,
+  getDirectionInRadians,
 } from "../utils.js";
 
 // ==============================

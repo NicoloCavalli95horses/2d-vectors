@@ -32,6 +32,6 @@ export function getDirectionInRadians({ x, y }) {
 }
 
 // Get direction in degree (-180 to 180°)
-export function getDirectionInDegrees({ x, y }){
-  return getDirectionInRadians({ x, y }) * 180 / Math.PI;
+export function getDirectionInDegrees({ x, y }) {
+  return (getDirectionInRadians({ x, y }) * 180) / Math.PI;
 }

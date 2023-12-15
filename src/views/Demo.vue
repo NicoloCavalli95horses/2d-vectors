@@ -1,38 +1,45 @@
 <template>
-  <canvas ref="canvas" />
+  <div class="wrapper">
+    <div class="info">
+      <h3>Magnitude: ~{{ magnitude.toFixed(2) }}</h3>
+      <p>Vector distance from the center of the Cartesian plane</p>
+      <h3 class="top-12">
+        Direction: ~
+        {{ radians.toFixed(2) }}
+        ({{ degree.toFixed(2) }}°)
+      </h3>
+      <p>Radians from the center. Range from 0 to π (180°)</p>
+    </div>
 
-  <!-- Upper left info box -->
-  <div class="info">
-    <h3>Magnitude: ~{{ getMagnitude(point).toFixed(2) }}</h3>
-    <p>Vector distance from the center of the Cartesian plane</p>
-    <h3 class="top-12">
-      Direction: ~
-      {{ getDirectionInRadians(point).toFixed(2) }}
-      ({{ getDirectionInDegrees(point).toFixed(2) }}°)
-    </h3>
-    <p>Radians from the center. Range from 0 to π (180°)</p>
-  </div>
+    <div class="x-axis" />
+    <div class="y-axis" />
+    <div class="abs-center">
+      <div class="center" />
+      <h4 class="top-44">0, 0</h4>
+    </div>
 
-  <!-- Center point of the cartesian plane -->
-  <div class="abs-center top-12">
-    <h4>(0, 0)</h4>
-  </div>
+    <div
+      class="circle"
+      :style="{
+        width: `${2 * magnitude}px`,
+        height: `${2 * magnitude}px`,
+      }"
+    />
 
-  <!-- Tip under the cursor -->
-  <div
-    :style="{
-      position: 'absolute',
-      top: `${point.y + offset.y + 20}px`,
-      left: `${point.x + offset.x}px`,
-      transform: 'translate(-50%, -50%)',
-    }"
-  >
-    <h4>(X: {{ point.x }}, Y: {{ point.y }})</h4>
-  </div>
+    <div
+      class="cursor"
+      :style="{ top: `${cursor.y}px`, left: `${cursor.x}px` }"
+    />
+    <h4
+      class="absolute"
+      :style="{ top: `${cursor.y + 20}px`, left: `${cursor.x}px` }"
+    >
+      X: {{ centered_cursor.x * -1 }}, Y: {{ centered_cursor.y }}
+    </h4>
 
-  <!-- Bottom center tip -->
-  <div class="abs-center-bottom">
-    <h3>Press <span class="key">Esc</span> to come back to the menu</h3>
+    <div class="abs-center-bottom">
+      <h3>Press <span class="key">Esc</span> to come back to the menu</h3>
+    </div>
   </div>
 </template>
 
@@ -40,84 +47,34 @@
 // ==============================
 // Import
 // ==============================
-import { reactive, ref } from "@vue/reactivity";
-import { onMounted } from "@vue/runtime-core";
+import { computed, reactive } from "vue";
+import { onMounted } from "vue";
 import { onUnmounted } from "vue";
 import { useRouter } from "vue-router";
-import {
-  randomInterval,
-  getDirectionInRadians,
-  getDirectionInDegrees,
-  getMagnitude,
-  getRandomColor,
-  getXY,
-} from "../utils.js";
 
 // ==============================
 // Const
 // ==============================
 const router = useRouter();
-const canvas = ref(undefined);
-const ctx = ref(undefined);
-const offset = reactive({
-  x: null,
-  y: null,
+const cursor = reactive({ x: null, y: null });
+
+const centered_cursor = computed(() => {
+  return {
+    x: window.innerWidth / 2 - cursor.x,
+    y: window.innerHeight / 2 - cursor.y,
+  };
 });
 
-const point = reactive({
-  x: 90,
-  y: 120,
-  radius: 6,
-  color: "#800",
-});
+const magnitude = computed(() => Math.hypot(centered_cursor.value.x, centered_cursor.value.y ));
+const radians   = computed(() => Math.atan2(centered_cursor.value.y, centered_cursor.value.x ));
+const degree    = computed(() => radians.value * 180 / Math.PI);
 
 // ==============================
 // Functions
 // ==============================
-function drawPoint(x, y, radius = 5, color = "white") {
-  ctx.value.beginPath();
-  ctx.value.fillStyle = color;
-  ctx.value.arc(x, y, radius, 0, Math.PI * 2);
-  ctx.value.fill();
-}
-
-function drawAxes() {
-  ctx.value.save();
-  ctx.value.beginPath();
-
-  // X axes
-  ctx.value.moveTo(-offset.x, 0);
-  ctx.value.lineTo(offset.x, 0);
-
-  // Y axes
-  ctx.value.moveTo(0, -offset.y);
-  ctx.value.lineTo(0, offset.y);
-
-  ctx.value.setLineDash([5, 5]);
-  ctx.value.stroke();
-  ctx.value.restore();
-}
-
 function onMouseMove(e) {
-  point.x = e.clientX - offset.x;
-  point.y = e.clientY - offset.y;
-  update();
-}
-
-function update() {
-  // Update canvas
-  ctx.value.save();
-  ctx.value.fillStyle = "#222";
-  ctx.value.fillRect(
-    -offset.x,
-    -offset.y,
-    canvas.value.width,
-    canvas.value.height
-  );
-  drawAxes();
-  drawPoint(0, 0); // center point
-  drawPoint(point.x, point.y, point.radius, point.color);
-  ctx.value.restore();
+  cursor.x = e.clientX;
+  cursor.y = e.clientY;
 }
 
 function onkeyup(e) {
@@ -132,31 +89,6 @@ function onkeyup(e) {
 onMounted(() => {
   document.addEventListener("mousemove", onMouseMove);
   document.addEventListener("keyup", onkeyup);
-
-  ctx.value = canvas.value.getContext("2d");
-  canvas.value.width = window.innerWidth;
-  canvas.value.height = window.innerHeight;
-
-  // Set offset
-  offset.x = canvas.value.width / 2;
-  offset.y = canvas.value.height / 2;
-
-  // Translate the canvas in order to set the center point to (0,0)
-  ctx.value.translate(offset.x, offset.y);
-
-  // Initial point
-  ctx.value.save();
-  ctx.value.fillStyle = "#222";
-  ctx.value.fillRect(
-    -offset.x,
-    -offset.y,
-    canvas.value.width,
-    canvas.value.height
-  );
-  drawAxes();
-  drawPoint(point.x, point.y, point.radius, point.color);
-  drawPoint(0, 0); // center point
-  ctx.value.restore();
 });
 
 onUnmounted(() => {
@@ -166,6 +98,51 @@ onUnmounted(() => {
 </script>
 
 <style lang="scss" scoped>
+.wrapper {
+  width: 100%;
+  height: 100%;
+  background-color: #222;
+}
+.cursor {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  background-color: orangered;
+}
+h4.absolute {
+  position: absolute;
+  transform: translate(-50%, 0);
+}
+.x-axis {
+  width: 100%;
+  height: 2px;
+  background: #333;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.y-axis {
+  width: 2px;
+  height: 100%;
+  background: #333;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, 0%);
+}
+.center {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: white;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
 .info {
   position: absolute;
   top: 22px;
@@ -176,5 +153,13 @@ onUnmounted(() => {
   p {
     margin: 8px 12px;
   }
+}
+.circle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  border: 2px solid #666;
 }
 </style>

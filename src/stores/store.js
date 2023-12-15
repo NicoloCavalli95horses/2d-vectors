@@ -3,12 +3,9 @@ import { defineStore } from "pinia";
 export const Store = defineStore({
   id: "gameSettings",
   state: () => ({
-      settings: {
-      }
+    settings: {},
   }),
-  getters: {
-  },
+  getters: {},
 
-  actions: {
-  },
+  actions: {},
 });

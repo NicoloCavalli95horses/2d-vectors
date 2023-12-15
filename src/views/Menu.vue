@@ -20,9 +20,6 @@
 // ==============================
 // Import
 // ==============================
-import { RouterLink, RouterView } from "vue-router";
-import Btn from "../components/Btn.vue";
-
 </script>
 
 <style scoped lang="scss">
