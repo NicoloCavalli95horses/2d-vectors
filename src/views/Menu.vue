@@ -24,7 +24,6 @@
 
 <style scoped lang="scss">
 .menu {
-  width: 400px;
   h1 {
     text-align: center;
   }

@@ -5,10 +5,10 @@
       <p>Vector distance from the center of the Cartesian plane</p>
       <h3 class="top-12">
         Direction: ~
-        {{ radians.toFixed(2) }}
+        {{ direction.toFixed(2) }}
         ({{ degree.toFixed(2) }}°)
       </h3>
-      <p>Radians from the center. Range from 0 to π (180°)</p>
+      <p>direction from the center. Range from 0 to π (180°)</p>
     </div>
 
     <div class="x-axis" />
@@ -28,8 +28,8 @@
       X: {{ centered_cursor.x * -1 }}, Y: {{ centered_cursor.y }}
     </h4>
 
-    <div class="abs-center-bottom">
-      <h3>Press <span class="key">Esc</span> to come back to the menu</h3>
+    <div class="abs-center-bottom" @click="router.push('/')">
+      <h3>Back</h3>
     </div>
   </div>
 </template>
@@ -57,8 +57,8 @@ const centered_cursor = computed(() => {
 });
 
 const magnitude = computed(() => Math.hypot(centered_cursor.value.x, centered_cursor.value.y ));
-const radians   = computed(() => Math.atan2(centered_cursor.value.y, centered_cursor.value.x ));
-const degree    = computed(() => radians.value * 180 / Math.PI);
+const direction = computed(() => Math.atan2(centered_cursor.value.y, centered_cursor.value.x ));
+const degree    = computed(() => direction.value * 180 / Math.PI);
 
 // ==============================
 // Functions
@@ -66,12 +66,6 @@ const degree    = computed(() => radians.value * 180 / Math.PI);
 function onMouseMove(e) {
   cursor.x = e.clientX;
   cursor.y = e.clientY;
-}
-
-function onkeyup(e) {
-  if (e.key == "Escape") {
-    router.push("/");
-  }
 }
 
 // ==============================
@@ -91,8 +85,9 @@ onUnmounted(() => {
 <style lang="scss" scoped>
 .wrapper {
   width: 100%;
-  height: 100%;
   background-color: #222;
+  overflow-x: hidden;
+  overflow-y: hidden;
 }
 .cursor {
   width: 10px;

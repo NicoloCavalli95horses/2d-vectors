@@ -4,15 +4,15 @@
   <!-- Upper left info box -->
   <div class="info">
     <h3>Attraction point</h3>
-    <p>Just a random magnitude reduction. Cool, right?</p>
+    <p>Tap or press the space bar to animate</p>
   </div>
 
   <!-- Center point of attraction -->
   <div class="abs-center attraction-point"></div>
 
   <!-- Bottom center tip -->
-  <div class="abs-center-bottom">
-    <h3>Press <span class="key">Esc</span> to come back to the menu</h3>
+  <div class="abs-center-bottom" @click="onBack">
+    <h3>Back</h3>
   </div>
 </template>
 
@@ -40,6 +40,8 @@ const canvas = ref(undefined);
 const ctx = ref(undefined);
 const points = ref([]);
 const arrived = new Set([]);
+const invert_animation = ref( false );
+const has_finished = ref( false );
 const TOTAL = 99;
 const offset = reactive({
   x: null,
@@ -51,48 +53,49 @@ let interval;
 // ==============================
 // Functions
 // ==============================
-function drawMovingPoint() {
-  ctx.value.save();
+function drawMovingPoint({ invert = false } = {}) {
+    ctx.value.fillStyle = "#222";
+    ctx.value.fillRect(-offset.x, -offset.y, canvas.value.width, canvas.value.height);
+    ctx.value.save();
 
-  // Clear the canvas
-  ctx.value.fillStyle = "#222";
-  ctx.value.fillRect(
-    -offset.x,
-    -offset.y,
-    canvas.value.width,
-    canvas.value.height
-  );
+    for (const point of points.value) {
+        ctx.value.beginPath();
+        ctx.value.fillStyle = point.color;
+        ctx.value.arc(point.x, point.y, point.radius, 0, Math.PI * 2);
+        ctx.value.fill();
 
-  // Draw the points
-  for (const point of points.value) {
-    ctx.value.beginPath();
-    ctx.value.fillStyle = point.color;
-    ctx.value.arc(point.x, point.y, point.radius, 0, Math.PI * 2);
-    ctx.value.fill();
+        point.magnitude = getMagnitude({ x: point.x, y: point.y });
 
+        // Adjust magnitude based on direction and speed
+        point.magnitude = invert ? (point.magnitude + point.speed) : (point.magnitude - point.speed);
+
+        // Check if the point can still be animated
+        const canAnimate = invert ? point.magnitude <= 999 : point.magnitude >= 0;
+
+        if (canAnimate) {
+            const newPoints = getXY({
+                mag: point.magnitude,
+                dir: getDirectionInRadians({ x: point.x, y: point.y }),
+            });
+
+            // Update point coordinates
+            point.x = newPoints.x;
+            point.y = newPoints.y;
+        } else {
+            arrived.add(point.id);
+        }
+    }
+
+    // Restore the context outside the loop
     ctx.value.restore();
 
-    // Get current magnitude
-    point.magnitude = getMagnitude({ x: point.x, y: point.y });
-
-    // Reduce magnitude in order to get closer to the center
-    point.magnitude = point.magnitude - point.speed;
-
-    if (point.magnitude > 0) {
-      let points = getXY({
-        mag: point.magnitude,
-        dir: getDirectionInRadians({ x: point.x, y: point.y }),
-      });
-      point.x = points.x;
-      point.y = points.y;
-    } else {
-      arrived.add(point.id);
+    // Check if all points have arrived and stop the animation
+    if (arrived.size === TOTAL) {
+        clearInterval(interval);
+        arrived.clear();
     }
-    if (arrived.size == TOTAL) {
-      clearInterval(interval);
-    }
-  }
 }
+
 
 function generateRandomPoints() {
   for (let i = 0; i < TOTAL; i++) {
@@ -101,17 +104,36 @@ function generateRandomPoints() {
       x: randomInterval(-window.innerWidth / 2, window.innerWidth / 2),
       y: randomInterval(-window.innerHeight / 2, window.innerHeight / 2),
       magnitude: null,
-      speed: randomInterval(1, 3),
-      radius: randomInterval(3, 15),
+      speed: randomInterval(2, 6),
+      radius: randomInterval(2, 19),
       color: getRandomColor(),
     });
   }
 }
 
 function onkeyup(e) {
-  if (e.key == "Escape") {
-    router.push("/");
+  if (e.code == "Space") {
+    invertAnimation();
   }
+}
+
+function invertAnimation() {
+  clearInterval( interval );
+  invert_animation.value = !invert_animation.value;
+  has_finished.value = false;
+  interval = setInterval(() => drawMovingPoint({invert:invert_animation.value}), 10);
+}
+
+function onResize() {
+  canvas.value.width = window.innerWidth;
+  canvas.value.height = window.innerHeight;
+  offset.x = canvas.value.width / 2;
+  offset.y = canvas.value.height / 2;
+  ctx.value.translate(offset.x, offset.y);
+}
+
+function onBack() {
+  router.push("/");
 }
 
 // ==============================
@@ -120,6 +142,8 @@ function onkeyup(e) {
 onMounted(() => {
   // Add event listener
   document.addEventListener("keyup", onkeyup);
+  document.addEventListener("mouseup", invertAnimation);
+  window.addEventListener("resize", onResize);
 
   // Set the canvas up
   ctx.value = canvas.value.getContext("2d");
@@ -138,6 +162,8 @@ onMounted(() => {
 
 onUnmounted(() => {
   document.removeEventListener("keyup", onkeyup);
+  document.removeEventListener("mouseup", invertAnimation);
+  window.removeEventListener("resize", onResize);
   clearInterval(interval);
 });
 </script>
