@@ -13,27 +13,18 @@
 
     <div class="x-axis" />
     <div class="y-axis" />
+    
+    <div class="circle" :style="{ width: `${2 * magnitude}px`, height: `${2 * magnitude}px` }">
+      <div class="arrow" :style="{ width: `${2 * magnitude}px`, transform: `translate(-50%, -50%) rotateZ(${ degree }deg)`}"/>
+    </div>
+
     <div class="abs-center">
       <div class="center" />
       <h4 class="top-44">0, 0</h4>
     </div>
 
-    <div
-      class="circle"
-      :style="{
-        width: `${2 * magnitude}px`,
-        height: `${2 * magnitude}px`,
-      }"
-    />
-
-    <div
-      class="cursor"
-      :style="{ top: `${cursor.y}px`, left: `${cursor.x}px` }"
-    />
-    <h4
-      class="absolute"
-      :style="{ top: `${cursor.y + 20}px`, left: `${cursor.x}px` }"
-    >
+    <div class="cursor" :style="{ top: `${cursor.y}px`, left: `${cursor.x}px` }" />
+    <h4 class="absolute" :style="{ top: `${cursor.y + 20}px`, left: `${cursor.x}px` }">
       X: {{ centered_cursor.x * -1 }}, Y: {{ centered_cursor.y }}
     </h4>
 
@@ -159,7 +150,15 @@ h4.absolute {
   top: 50%;
   left: 50%;
   border-radius: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) rotateZ(180deg);
   border: 2px solid #666;
+  .arrow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform-origin: center;
+    height: 4px;
+    background-color: orangered;
+  }
 }
 </style>
