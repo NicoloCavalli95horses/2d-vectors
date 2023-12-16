@@ -35,3 +35,10 @@ export function getDirectionInRadians({ x, y }) {
 export function getDirectionInDegrees({ x, y }) {
   return (getDirectionInRadians({ x, y }) * 180) / Math.PI;
 }
+
+export function mapValue(value, startRange, endRange, newStart, newEnd) {
+  value = Math.min(Math.max(value, startRange), endRange);
+  const percentage = (value - startRange) / (endRange - startRange);
+  const mappedValue = percentage * (newEnd - newStart) + newStart;
+  return mappedValue;
+}

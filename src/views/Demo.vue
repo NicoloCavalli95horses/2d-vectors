@@ -1,5 +1,5 @@
 <template>
-  <div class="wrapper">
+  <div class="wrapper" @pointerdown="show_circle = !show_circle">
     <div class="info">
       <h3>Magnitude: ~{{ magnitude.toFixed(2) }}</h3>
       <p>Vector distance from the center of the Cartesian plane</p>
@@ -14,9 +14,15 @@
     <div class="x-axis" />
     <div class="y-axis" />
     
-    <div class="circle" :style="{ width: `${2 * magnitude}px`, height: `${2 * magnitude}px` }">
-      <div class="arrow" :style="{ width: `${2 * magnitude}px`, transform: `translate(-50%, -50%) rotateZ(${ degree }deg)`}"/>
-    </div>
+    <div
+      v-show="show_circle"
+      class="circle"
+      :style="{ 
+        'width': `${2 * magnitude}px`,
+        'height': `${2 * magnitude}px`,
+        'background-image': `conic-gradient(transparent ${ 360 - degree }deg, orangered 0)`,
+        }"
+    />
 
     <div class="abs-center">
       <div class="center" />
@@ -38,16 +44,18 @@
 // ==============================
 // Import
 // ==============================
-import { computed, reactive } from "vue";
+import { ref, computed, reactive } from "vue";
 import { onMounted } from "vue";
 import { onUnmounted } from "vue";
 import { useRouter } from "vue-router";
+import { mapValue } from '../utils';
 
 // ==============================
 // Const
 // ==============================
 const router = useRouter();
-const cursor = reactive({ x: null, y: null });
+const cursor = reactive({ x: null, y: null, down: false });
+const show_circle = ref( false );
 
 const centered_cursor = computed(() => {
   return {
@@ -58,7 +66,7 @@ const centered_cursor = computed(() => {
 
 const magnitude = computed(() => Math.hypot(centered_cursor.value.x, centered_cursor.value.y ));
 const direction = computed(() => Math.atan2(centered_cursor.value.y, centered_cursor.value.x ));
-const degree    = computed(() => direction.value * 180 / Math.PI);
+const degree    = computed(() => mapValue(direction.value, -Math.PI, Math.PI, 360, 0 ));
 
 // ==============================
 // Functions
@@ -145,15 +153,7 @@ h4.absolute {
   top: 50%;
   left: 50%;
   border-radius: 50%;
-  transform: translate(-50%, -50%) rotateZ(180deg);
+  transform: translate(-50%, -50%) rotateZ(90deg);
   border: 2px solid #666;
-  .arrow {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform-origin: center;
-    height: 4px;
-    background-color: orangered;
-  }
 }
 </style>
