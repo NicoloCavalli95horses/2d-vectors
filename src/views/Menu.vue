@@ -7,6 +7,9 @@
         <RouterLink to="/demo"><p>Magnitude and direction</p></RouterLink>
       </li>
       <li>
+        <RouterLink to="/shape"><p>Shape editor</p></RouterLink>
+      </li>
+      <li>
         <RouterLink to="/attraction"><p>Attraction point</p></RouterLink>
       </li>
       <li>
