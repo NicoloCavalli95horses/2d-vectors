@@ -190,3 +190,7 @@ svg {
   padding: 6px;
   border-radius: 12px;
 }
+
+.pointer {
+  cursor: pointer;
+}
